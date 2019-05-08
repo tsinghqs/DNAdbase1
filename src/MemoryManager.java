@@ -51,7 +51,7 @@ public class MemoryManager {
         System.out.println();
         int i = 1;
         for (FreeSection sec : free_list.getList()) {
-            System.out.print("[Block " + i + "] ");
+            System.out.print("[Block " + (i++) + "] ");
             System.out.print("Starting Byte Location: " + sec.getOffset());
             System.out.println(", Size " + sec.getLength() + " bytes");
         }

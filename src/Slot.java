@@ -38,8 +38,7 @@ public class Slot {
     }
     
     private int getInt(byte[] bucket, int index) {
-        return bucket[index] << 24 | bucket[index+1] << 16 | bucket[index+2] << 8 | bucket[index+3];
-        
+        return bucket[index] << 24 | (bucket[index+1]&0xff) << 16 | (bucket[index+2]&0xff) << 8 | (bucket[index+3]&0xff);
     }
     
     private void setInt(int value, byte[] bucket, int index) {

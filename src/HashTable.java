@@ -53,7 +53,7 @@ public class HashTable {
         }
     }
     
-    public void remove(int slot_num, String id, MemoryManager mem_mgr) throws IOException {
+    public void remove(int slot_num, String id, MemoryManager mem_mgr, boolean verbose) throws IOException {
         loadBucket(slot_num / 32);
         int start = slot_num % 32;
         int index = start;
@@ -68,8 +68,10 @@ public class HashTable {
                 String id_stored = mem_mgr.get(slot.getIdHandle());
                 if (id_stored.equals(id)) {
                     // Remove it
-                    System.out.println("Sequence Removed " + id + ":");
-                    System.out.println(mem_mgr.get(slot.getSeqHandle()));
+                    if (verbose) {
+                        System.out.println("Sequence Removed " + id + ":");
+                        System.out.println(mem_mgr.get(slot.getSeqHandle()));
+                    }
                     
                     // Overwrite hash_table slot with an empty slot
                     new Slot().write(bucket, index);
@@ -96,7 +98,9 @@ public class HashTable {
             }
         }
         
-        System.out.println("Remove Failed: No such sequence!");
+        if (verbose) {
+            System.out.println("Remove Failed: No such sequence!");
+        }
     }
     
     public void search(int slot_num, String id, MemoryManager mem_mgr) throws IOException {
@@ -133,7 +137,42 @@ public class HashTable {
             }
         }
         
-        System.out.println("SequenceID " + id + " not found.");
+        System.out.println("SequenceID " + id + " not found");
+    }
+    
+    public boolean contains(int slot_num, String id, MemoryManager mem_mgr) throws IOException {
+        loadBucket(slot_num / 32);
+        int start = slot_num % 32;
+        int index = start;
+        while (true) {
+            
+            // Read the slot at the current position
+            slot.read(bucket, index);
+            
+            // If the slot is not empty,
+            if (! slot.getIdHandle().isEmpty()) {
+                // and, if the slot contains the same id
+                String id_stored = mem_mgr.get(slot.getIdHandle());
+                if (id_stored.equals(id)) {
+                    return true;
+                }
+            }
+            
+            // Go to next slot
+            index++;
+            
+            // If it is out of bucket, cycle from 0
+            if (index > 31) {
+                index = 0;
+            }
+            
+            // If we reach the "start" again, we are done cycling through
+            if (index == start) {
+                break;
+            }
+        }
+        
+        return false;
     }
     
     public void loadBucket(int index) throws IOException {

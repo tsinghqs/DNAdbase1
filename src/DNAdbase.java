@@ -59,9 +59,14 @@ public class DNAdbase {
     }
     
     private static void insert(String id, String seq) throws IOException {
+        int slot_num = (int) SFold.hash(id, 64);
+        if (hash_table.contains(slot_num, id, mem_mgr)) {
+            hash_table.remove(slot_num, id, mem_mgr, false);
+        }
+        
         Handle id_handle = mem_mgr.insert(id);
         Handle seq_handle = mem_mgr.insert(seq);
-        int slot_num = (int) SFold.hash(id, 64);
+        
         if (! hash_table.insert(slot_num, id_handle, seq_handle)) {
             System.out.println("Insert failed: Bucket is full");
             mem_mgr.remove(id_handle);
@@ -71,7 +76,7 @@ public class DNAdbase {
     
     private static void remove(String id, MemoryManager mem_mgr) throws IOException {
         int slot_num = (int) SFold.hash(id, 64);
-        hash_table.remove(slot_num, id, mem_mgr);
+        hash_table.remove(slot_num, id, mem_mgr, true);
     }
     
     private static void print() throws IOException {

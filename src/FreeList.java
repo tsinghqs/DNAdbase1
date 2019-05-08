@@ -53,10 +53,12 @@ public class FreeList {
         }
         
         FreeSection sec = list.get(index);
+        int offset = sec.getOffset();
         sec.setLength(sec.getLength() - len);
+        sec.setOffset(sec.getOffset() + len);
         if (sec.getLength() == 0) {
             list.remove(index);
         }
-        return sec.getOffset();
+        return offset;
     }
 }
