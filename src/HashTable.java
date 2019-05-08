@@ -99,7 +99,7 @@ public class HashTable {
         }
         
         if (verbose) {
-            System.out.println("Remove Failed: No such sequence!");
+            System.out.println("SequenceID " + id + " not found");
         }
     }
     

@@ -61,14 +61,16 @@ public class DNAdbase {
     private static void insert(String id, String seq) throws IOException {
         int slot_num = (int) SFold.hash(id, 64);
         if (hash_table.contains(slot_num, id, mem_mgr)) {
-            hash_table.remove(slot_num, id, mem_mgr, false);
+            // hash_table.remove(slot_num, id, mem_mgr, false);
+            System.out.println("SequenceID " + id + " exists");
+            return;
         }
         
         Handle id_handle = mem_mgr.insert(id);
         Handle seq_handle = mem_mgr.insert(seq);
         
         if (! hash_table.insert(slot_num, id_handle, seq_handle)) {
-            System.out.println("Insert failed: Bucket is full");
+            System.out.println("Bucket full.Sequence " + id + " could not be inserted");
             mem_mgr.remove(id_handle);
             mem_mgr.remove(seq_handle);
         }
