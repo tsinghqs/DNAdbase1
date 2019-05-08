@@ -61,7 +61,7 @@ public class Parser {
                 commando.remove(commands[1]);
             }
             else if (commands[0].equals("search")) {
-                commando.search(commands[1]);
+                commando.search(commands[1], true);
             }
             else if (commands[0].equals("print")) {
                 commando.print();

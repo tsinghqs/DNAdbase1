@@ -38,8 +38,8 @@ public class CommandExecutionTest extends TestCase
     {
         commando.insert("AAA", "AAAAA");
         commando.insert("AAA", "AAAAA");
-        commando.search("AAA");
-        commando.search("BBB");
+        commando.search("AAA", true);
+        commando.search("BBB", true);
         commando.remove("AAA");
         commando.remove("ACT");
         commando.print();

@@ -68,18 +68,51 @@ public class CommandExecution {
     /**
      * Search method
      * @param id the string we are searching for
+     * @param boolean print or not
      * @throws IOException io exception
      */
-    public void search(String id) throws IOException
-    {
-        String found = this.tab.hasID(id);
-        if (!(found.equals("fail"))) {
-            System.out.println("Sequence found: " + found);
+    
+    public boolean search(String id, boolean printIt) throws IOException {
+        int homIndx = (int)this.sfold(id);
+        if (this.tab.getRecords()[homIndx] != null && !this.tab
+            .getRecords()[homIndx].isTombstone()) {
+            Handle seqId = tab.getRecords()[homIndx].getSeqIDHandle();
+            String memId = mem.getHandleString(seqId);
+            if (memId.equals(id)) {
+                Handle seq = tab.getRecords()[homIndx].getSeqHandle();
+                String sequence = mem.getHandleString(seq);
+                if (printIt) {
+                    System.out.println("Sequence Found: " + sequence);
+                }
+                return true;
+            }
         }
-        else {
+        int tempIndx = homIndx + 1;
+        tempIndx = tempIndx % 32 == 0 ? tempIndx - 32 : tempIndx;
+        while (tempIndx != homIndx) {
+            if (tab.getRecords()[tempIndx] != null && !tab
+                .getRecords()[tempIndx].isTombstone()) {
+                Handle seqId = tab.getRecords()[tempIndx].getSeqIDHandle();
+                String memId = mem.getHandleString(seqId);
+                if (memId.equals(id)) {
+                    Handle seq = tab.getRecords()[tempIndx].getSeqHandle();
+                    String sequence = mem.getHandleString(seq);
+                    if (printIt) {
+                        System.out.println("Sequence Found: " + sequence);
+                    }
+                    return true;
+                }
+            }
+            tempIndx++;
+            tempIndx = tempIndx % 32 == 0 ? tempIndx - 32 : tempIndx;
+        }
+        if (printIt) {
             System.out.println("SequenceID " + id + " not found");
         }
+        return false;
+
     }
+
 
 
     /**
@@ -89,7 +122,7 @@ public class CommandExecution {
      */
     public void remove(String id) throws IOException
     {
-        boolean found = this.tab.hasStringID(id);
+        boolean found = this.search(id, false);
         if (found) {
             // remove vikram
             Record rem = this.tab.removeHash(id);
